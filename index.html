@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
-  <title>Note Sprint</title>
+  <title>Note Sprint v3</title>
   <style>
     :root {
       --bg: #f3f6fb;
@@ -245,7 +245,7 @@
       </div>
 
       <button id="startBtn" class="primary">Start Practice</button>
-      <p class="footer-note">Natural notes only. Progress is saved locally on this device.</p>
+      <p class="footer-note">Natural notes only · 27 exact positions per clef · Progress saved locally.</p>
     </section>
 
     <section id="practiceScreen" class="screen">
@@ -258,8 +258,8 @@
       <div id="modeLabel" class="mode-label"></div>
 
       <div class="card staff-card">
-        <svg id="quizStaff" viewBox="0 0 520 250" aria-label="Music note">
-          <rect width="520" height="250" fill="#fff"/>
+        <svg id="quizStaff" viewBox="0 0 520 270" aria-label="Music note">
+          <rect width="520" height="270" fill="#fff"/>
           <g id="quizLines"></g>
           <text id="quizClef" x="46" y="158" font-size="88" font-family="serif">𝄞</text>
           <g id="quizLedger"></g>
@@ -308,7 +308,7 @@
         <div id="guitarProgress">
           <div class="map-title-row">
             <h3>🎸 Treble Clef Note Map</h3>
-            <span>Exact positions</span>
+            <span>27 positions</span>
           </div>
           <p class="map-help">Tap any coloured note for details.</p>
           <div class="map-wrap">
@@ -319,7 +319,7 @@
         <div id="pianoProgress" style="display:none;">
           <div class="map-title-row">
             <h3>🎹 Treble Clef Note Map</h3>
-            <span>Exact positions</span>
+            <span>27 positions</span>
           </div>
           <p class="map-help">Each staff position is tracked separately.</p>
           <div class="map-wrap">
@@ -328,7 +328,7 @@
 
           <div class="map-title-row" style="margin-top:14px;">
             <h3>🎹 Bass Clef Note Map</h3>
-            <span>Exact positions</span>
+            <span>27 positions</span>
           </div>
           <div class="map-wrap">
             <svg id="pianoBassMap" viewBox="0 0 620 250"></svg>
@@ -384,8 +384,8 @@
   <script>
     const SOLFEGE = ["Do","Re","Mi","Fa","Sol","La","Si"];
     const NOTE_NAMES = ["C","D","E","F","G","A","B"];
-    const STEP_MIN = -2;
-    const STEP_MAX = 12;
+    const STEP_MIN = -6;
+    const STEP_MAX = 20;
 
     const settings = { instrument: "guitar", length: 20 };
     let progressMode = "guitar";
@@ -520,7 +520,7 @@
       lines.innerHTML = "";
       ledger.innerHTML = "";
 
-      const top = 75, spacing = 22;
+      const top = 120, spacing = 16;
       for (let i=0; i<5; i++) {
         const y = top + i*spacing;
         lines.innerHTML += `<line x1="105" y1="${y}" x2="455" y2="${y}" stroke="#1f2937" stroke-width="2.2"/>`;
@@ -528,7 +528,7 @@
 
       clef.textContent = note.clef === "treble" ? "𝄞" : "𝄢";
       clef.setAttribute("font-size", note.clef === "treble" ? "88" : "76");
-      clef.setAttribute("y", note.clef === "treble" ? "159" : "151");
+      clef.setAttribute("y", note.clef === "treble" ? "202" : "194");
 
       const y = top + 4*spacing - note.step*(spacing/2);
       head.setAttribute("cy", y);
@@ -712,14 +712,14 @@
 
     function drawProgressMap(svgId, instrument, clef, data) {
       const svg = document.getElementById(svgId);
-      const width = 620, top = 62, spacing = 18;
+      const width = 620, top = 92, spacing = 14;
       let content = `<rect width="${width}" height="250" fill="#fff"/>`;
 
       for (let i=0;i<5;i++) {
         const y=top+i*spacing;
         content += `<line x1="60" y1="${y}" x2="594" y2="${y}" stroke="#263142" stroke-width="1.5"/>`;
       }
-      content += `<text x="12" y="${clef==="treble" ? 126 : 117}" font-size="${clef==="treble" ? 66 : 57}" font-family="serif">${clef==="treble" ? "𝄞" : "𝄢"}</text>`;
+      content += `<text x="12" y="${clef==="treble" ? 157 : 149}" font-size="${clef==="treble" ? 66 : 57}" font-family="serif">${clef==="treble" ? "𝄞" : "𝄢"}</text>`;
 
       const count = STEP_MAX-STEP_MIN+1;
       const startX = 88, endX = 575;
@@ -743,13 +743,13 @@
         content += `
           <g class="map-note" data-id="${id}" style="cursor:pointer">
             <circle cx="${x}" cy="${y}" r="9" fill="${c.fill}" stroke="${c.stroke}" stroke-width="2"/>
-            <text x="${x}" y="187" text-anchor="middle" font-size="12" font-weight="750" fill="#334155">${pitch.solfege}</text>
+            <text x="${x}" y="221" text-anchor="middle" font-size="9.5" font-weight="750" fill="#334155">${pitch.solfege}</text>
           </g>`;
       }
 
-      content += `<text x="88" y="220" font-size="11" fill="#7a8495">Ledger</text>
-                  <text x="280" y="220" font-size="11" fill="#7a8495">Staff positions</text>
-                  <text x="540" y="220" font-size="11" fill="#7a8495">Ledger</text>`;
+      content += `<text x="88" y="243" font-size="11" fill="#7a8495">Lower ledger notes</text>
+                  <text x="267" y="243" font-size="11" fill="#7a8495">Staff positions</text>
+                  <text x="500" y="243" font-size="11" fill="#7a8495">Upper ledger notes</text>`;
       svg.innerHTML=content;
 
       svg.querySelectorAll(".map-note").forEach(g => {
