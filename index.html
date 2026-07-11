@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0f172a" />
-  <title>Note Sprint v3</title>
+  <title>Note Sprint v4</title>
   <style>
     :root {
       --bg: #f3f6fb;
@@ -73,6 +73,18 @@
     .instrument b { font-size: 1.08rem; }
     .instrument small { color: var(--muted); text-align: center; line-height: 1.3; }
 
+    .level-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+    .level-card {
+      border:1.5px solid var(--line); background:#fff; border-radius:15px;
+      min-height:86px; padding:10px 6px; text-align:center; color:var(--text);
+    }
+    .level-card.active { border-color:var(--primary); background:#edf2ff; color:var(--primary-dark); }
+    .level-card b { display:block; font-size:.95rem; margin-bottom:4px; }
+    .level-card small { color:var(--muted); font-size:.72rem; line-height:1.2; display:block; }
+    .stage-list { display:grid; gap:10px; }
+    .stage-row { border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .stage-head { display:flex; justify-content:space-between; gap:10px; font-weight:800; }
+    .stage-head span:last-child { color:var(--muted); }
     .segmented { display: grid; gap: 8px; }
     .cols-5 { grid-template-columns: repeat(5, 1fr); }
     .choice {
@@ -220,7 +232,7 @@
       <div class="card">
         <p class="section-title">Choose instrument</p>
         <div class="instrument-grid">
-          <button class="instrument active" data-instrument="guitar">
+          <button class="instrument" data-instrument="guitar">
             <span class="instrument-icon">🎸</span>
             <b>Guitar</b>
             <small>Treble clef only</small>
@@ -229,6 +241,24 @@
             <span class="instrument-icon">🎹</span>
             <b>Piano</b>
             <small>Treble and bass</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="section-title">Difficulty</p>
+        <div class="level-grid" id="levelChoices">
+          <button class="level-card" data-level="easy">
+            <b>Easy</b>
+            <small id="easyCount">Core notes</small>
+          </button>
+          <button class="level-card" data-level="standard">
+            <b>Standard</b>
+            <small id="standardCount">Adds more notes</small>
+          </button>
+          <button class="level-card" data-level="complete">
+            <b>Complete</b>
+            <small id="completeCount">Full practical range</small>
           </button>
         </div>
       </div>
@@ -245,7 +275,7 @@
       </div>
 
       <button id="startBtn" class="primary">Start Practice</button>
-      <p class="footer-note">Natural notes only · 27 exact positions per clef · Progress saved locally.</p>
+      <p class="footer-note">Higher levels include all notes from the earlier levels. Progress is saved locally.</p>
     </section>
 
     <section id="practiceScreen" class="screen">
@@ -302,6 +332,11 @@
           <div class="stat"><b id="overallTime">0.0s</b><span>Avg. time</span></div>
           <div class="stat"><b id="overallQuestions">0</b><span>Questions</span></div>
         </div>
+      </div>
+
+      <div class="card">
+        <p class="section-title">Level progress</p>
+        <div id="stageProgress" class="stage-list"></div>
       </div>
 
       <div class="card">
@@ -384,10 +419,40 @@
   <script>
     const SOLFEGE = ["Do","Re","Mi","Fa","Sol","La","Si"];
     const NOTE_NAMES = ["C","D","E","F","G","A","B"];
-    const STEP_MIN = -6;
-    const STEP_MAX = 20;
+    const LEVELS = {
+      guitar: {
+        easy:     { label:"Easy",     min:-2, max:8,  count:11 },
+        standard: { label:"Standard", min:-4, max:10, count:15 },
+        complete: { label:"Complete", min:-6, max:12, count:19 }
+      },
+      piano: {
+        easy:     { label:"Easy",     min:-2, max:10, count:13 },
+        standard: { label:"Standard", min:-4, max:12, count:17 },
+        complete: { label:"Complete", min:-6, max:14, count:21 }
+      }
+    };
 
-    const settings = { instrument: "guitar", length: 20 };
+    const PREF_KEY = "noteSprintPreferencesV1";
+    function loadPreferences() {
+      try {
+        const p = JSON.parse(localStorage.getItem(PREF_KEY)) || {};
+        return {
+          instrument: p.instrument === "piano" ? "piano" : "guitar",
+          level: ["easy","standard","complete"].includes(p.level) ? p.level : "easy"
+        };
+      } catch {
+        return { instrument:"guitar", level:"easy" };
+      }
+    }
+    function savePreferences() {
+      localStorage.setItem(PREF_KEY, JSON.stringify({
+        instrument: settings.instrument,
+        level: settings.level
+      }));
+    }
+
+    const pref = loadPreferences();
+    const settings = { instrument: pref.instrument, level: pref.level, length: 20 };
     let progressMode = "guitar";
     let state = {};
     let timerHandle;
@@ -419,11 +484,35 @@
       window.scrollTo({top:0, behavior:"smooth"});
     }
 
+    function applySetupSelection() {
+      document.querySelectorAll(".instrument").forEach(b =>
+        b.classList.toggle("active", b.dataset.instrument === settings.instrument)
+      );
+      document.querySelectorAll(".level-card").forEach(b =>
+        b.classList.toggle("active", b.dataset.level === settings.level)
+      );
+      const levels = LEVELS[settings.instrument];
+      document.getElementById("easyCount").textContent =
+        settings.instrument === "piano" ? `${levels.easy.count} notes per clef` : `${levels.easy.count} treble notes`;
+      document.getElementById("standardCount").textContent =
+        settings.instrument === "piano" ? `${levels.standard.count} notes per clef` : `${levels.standard.count} treble notes`;
+      document.getElementById("completeCount").textContent =
+        settings.instrument === "piano" ? `${levels.complete.count} notes per clef` : `${levels.complete.count} treble notes`;
+    }
+
     document.querySelectorAll(".instrument").forEach(btn => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".instrument").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
         settings.instrument = btn.dataset.instrument;
+        savePreferences();
+        applySetupSelection();
+      });
+    });
+
+    document.querySelectorAll(".level-card").forEach(btn => {
+      btn.addEventListener("click", () => {
+        settings.level = btn.dataset.level;
+        savePreferences();
+        applySetupSelection();
       });
     });
 
@@ -447,11 +536,16 @@
       return `${instrument}:${clef}:${step}`;
     }
 
-    function buildPool(instrument) {
+    function rangeFor(instrument, level) {
+      return LEVELS[instrument][level];
+    }
+
+    function buildPool(instrument, level) {
       const clefs = instrument === "guitar" ? ["treble"] : ["treble","bass"];
+      const range = rangeFor(instrument, level);
       const pool = [];
       clefs.forEach(clef => {
-        for (let step = STEP_MIN; step <= STEP_MAX; step++) {
+        for (let step = range.min; step <= range.max; step++) {
           const pitch = pitchFor(clef, step);
           pool.push({
             instrument, clef, step,
@@ -490,7 +584,7 @@
     function startSession() {
       const allStats = loadStats();
       const data = allStats[settings.instrument];
-      const pool = buildPool(settings.instrument);
+      const pool = buildPool(settings.instrument, settings.level);
       const questions = [];
       let previousId = null;
 
@@ -503,7 +597,7 @@
       state = {
         index:0, questions, attempts:0, firstTryCorrect:0,
         sessionTimes:[], questionStarted:performance.now(), locked:false,
-        instrument:settings.instrument
+        instrument:settings.instrument, level:settings.level
       };
 
       showScreen("practice");
@@ -576,7 +670,7 @@
       document.getElementById("attemptText").textContent = "3 tries";
       document.getElementById("progressFill").style.width = `${state.index/state.questions.length*100}%`;
       document.getElementById("modeLabel").textContent =
-        `${state.instrument === "guitar" ? "🎸 Guitar" : "🎹 Piano"} • ${note.clef === "treble" ? "Treble clef" : "Bass clef"}`;
+        `${state.instrument === "guitar" ? "🎸 Guitar" : "🎹 Piano"} • ${LEVELS[state.instrument][state.level].label} • ${note.clef === "treble" ? "Treble clef" : "Bass clef"}`;
       updateTimer();
     }
 
@@ -721,10 +815,11 @@
       }
       content += `<text x="12" y="${clef==="treble" ? 157 : 149}" font-size="${clef==="treble" ? 66 : 57}" font-family="serif">${clef==="treble" ? "𝄞" : "𝄢"}</text>`;
 
-      const count = STEP_MAX-STEP_MIN+1;
+      const range = LEVELS[instrument].complete;
+      const count = range.max-range.min+1;
       const startX = 88, endX = 575;
-      for (let step=STEP_MIN; step<=STEP_MAX; step++) {
-        const idx=step-STEP_MIN;
+      for (let step=range.min; step<=range.max; step++) {
+        const idx=step-range.min;
         const x=startX+(endX-startX)*(idx/(count-1));
         const y=top+4*spacing-step*(spacing/2);
         const pitch=pitchFor(clef,step);
@@ -809,6 +904,48 @@
       document.getElementById("detailPop").classList.add("show");
     }
 
+    function stageMastery(data, instrument, level) {
+      const range = LEVELS[instrument][level];
+      const clefs = instrument === "guitar" ? ["treble"] : ["treble","bass"];
+      let score = 0, total = 0, practised = 0;
+
+      clefs.forEach(clef => {
+        for (let step=range.min; step<=range.max; step++) {
+          total++;
+          const n = data.notes[noteId(instrument, clef, step)];
+          if (!n || !n.questions) continue;
+          practised++;
+          const accuracy = n.correctResponses / Math.max(1, n.responses);
+          const avg = n.totalTimeMs / Math.max(1, n.questions);
+          const speedFactor = avg <= 2000 ? 1 : avg <= 4000 ? .8 : .6;
+          score += accuracy * speedFactor;
+        }
+      });
+      return {
+        percent: total ? Math.round(score / total * 100) : 0,
+        practised,
+        total
+      };
+    }
+
+    function renderStageProgress(data, instrument) {
+      const wrap = document.getElementById("stageProgress");
+      wrap.innerHTML = "";
+      ["easy","standard","complete"].forEach(level => {
+        const result = stageMastery(data, instrument, level);
+        const row = document.createElement("div");
+        row.className = "stage-row";
+        row.innerHTML = `
+          <div class="stage-head">
+            <span>${LEVELS[instrument][level].label}</span>
+            <span>${result.percent}% mastered</span>
+          </div>
+          <div class="bar"><i style="width:${result.percent}%"></i></div>
+          <small style="color:var(--muted)">${result.practised} of ${result.total} positions practised</small>`;
+        wrap.appendChild(row);
+      });
+    }
+
     function renderProgress() {
       const all=loadStats();
       const data=all[progressMode];
@@ -837,6 +974,7 @@
         document.getElementById("trebleMeta").textContent=`${tr.questions} questions · ${tr.avg.toFixed(1)}s avg`;
         document.getElementById("bassMeta").textContent=`${bs.questions} questions · ${bs.avg.toFixed(1)}s avg`;
       }
+      renderStageProgress(data, progressMode);
       renderWeakList(data);
     }
 
@@ -870,6 +1008,7 @@
       if (e.target.id==="detailPop") e.currentTarget.classList.remove("show");
     });
 
+    applySetupSelection();
     renderAnswers();
   </script>
 </body>
