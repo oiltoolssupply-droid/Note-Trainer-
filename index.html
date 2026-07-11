@@ -7,155 +7,202 @@
   <title>Note Sprint</title>
   <style>
     :root {
-      --bg: #f4f7fb;
+      --bg: #f3f6fb;
       --card: #ffffff;
       --text: #172033;
-      --muted: #667085;
-      --line: #d7deea;
+      --muted: #68748b;
+      --line: #d7dfeb;
       --primary: #315efb;
-      --primary-dark: #244bd2;
+      --primary-dark: #254bd1;
       --good: #168a4a;
-      --bad: #d83a3a;
-      --warn: #c77b00;
-      --shadow: 0 12px 28px rgba(23, 32, 51, 0.09);
+      --good-bg: #dcf5e7;
+      --mid: #9a6b00;
+      --mid-bg: #fff0bd;
+      --bad: #c82f2f;
+      --bad-bg: #ffdada;
+      --none: #7a8495;
+      --none-bg: #edf1f6;
+      --shadow: 0 12px 28px rgba(23,32,51,.09);
       --radius: 20px;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    body { min-height: 100dvh; padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom); }
+    html, body {
+      margin: 0; min-height: 100%; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      min-height: 100dvh;
+      padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom);
+    }
+    button { font: inherit; }
 
-    button, select { font: inherit; }
-
-    .app { width: min(100%, 560px); margin: 0 auto; padding-bottom: 20px; }
+    .app { width: min(100%, 580px); margin: 0 auto; padding-bottom: 22px; }
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
       gap: 12px; padding: 10px 2px 14px;
     }
-    .brand h1 { margin: 0; font-size: 1.35rem; line-height: 1.1; }
-    .brand p { margin: 4px 0 0; color: var(--muted); font-size: .88rem; }
+    .brand h1 { margin: 0; font-size: 1.4rem; line-height: 1.1; }
+    .brand p { margin: 4px 0 0; color: var(--muted); font-size: .9rem; }
     .icon-btn {
-      min-width: 44px; min-height: 44px; border: 0; border-radius: 14px;
-      background: var(--card); box-shadow: var(--shadow); color: var(--text); font-weight: 700;
-    }
-
-    .card {
-      background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
-      padding: 18px; margin-bottom: 14px;
+      min-width: 48px; min-height: 46px; border: 0; border-radius: 15px;
+      background: var(--card); box-shadow: var(--shadow); color: var(--text);
+      font-weight: 800; padding: 0 14px;
     }
 
     .screen { display: none; }
     .screen.active { display: block; }
 
-    .section-title { font-size: .88rem; font-weight: 800; margin: 0 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-
-    .segmented {
-      display: grid; gap: 8px;
+    .card {
+      background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+      padding: 18px; margin-bottom: 14px;
     }
-    .segmented.cols-3 { grid-template-columns: repeat(3, 1fr); }
-    .segmented.cols-4 { grid-template-columns: repeat(2, 1fr); }
-    .segmented.cols-5 { grid-template-columns: repeat(5, 1fr); }
+    .section-title {
+      margin: 0 0 12px; color: var(--muted); font-size: .86rem;
+      font-weight: 850; text-transform: uppercase; letter-spacing: .055em;
+    }
 
+    .instrument-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .instrument {
+      border: 2px solid var(--line); background: #fff; border-radius: 18px;
+      min-height: 145px; padding: 14px 10px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 7px; color: var(--text);
+    }
+    .instrument.active { border-color: var(--primary); background: #edf2ff; }
+    .instrument-icon { font-size: 3.2rem; line-height: 1; }
+    .instrument b { font-size: 1.08rem; }
+    .instrument small { color: var(--muted); text-align: center; line-height: 1.3; }
+
+    .segmented { display: grid; gap: 8px; }
+    .cols-5 { grid-template-columns: repeat(5, 1fr); }
     .choice {
-      border: 1.5px solid var(--line); background: #fff; color: var(--text);
-      min-height: 64px; border-radius: 13px; font-weight: 750; padding: 8px 6px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-      line-height: 1.05;
-    }
-    .choice-symbol { font-family: serif; font-size: 2rem; line-height: 1; font-weight: 400; }
-    .choice-symbol.dual { font-size: 1.45rem; letter-spacing: -2px; }
-    .choice-symbol.accidental { font-size: 1.65rem; }
-    .choice.active { border-color: var(--primary); background: #edf2ff; color: var(--primary-dark); }
-
-    .primary {
-      width: 100%; min-height: 54px; border: 0; border-radius: 15px;
-      background: var(--primary); color: #fff; font-weight: 850; font-size: 1rem;
-      box-shadow: 0 8px 18px rgba(49,94,251,.25);
-    }
-    .primary:active { transform: translateY(1px); background: var(--primary-dark); }
-    .secondary {
-      width: 100%; min-height: 48px; border: 1.5px solid var(--line); border-radius: 14px;
+      min-height: 47px; border: 1.5px solid var(--line); border-radius: 13px;
       background: #fff; color: var(--text); font-weight: 800;
     }
+    .choice.active { border-color: var(--primary); background: #edf2ff; color: var(--primary-dark); }
+
+    .primary, .secondary {
+      width: 100%; min-height: 54px; border-radius: 15px; font-weight: 850;
+    }
+    .primary {
+      border: 0; background: var(--primary); color: white;
+      box-shadow: 0 8px 18px rgba(49,94,251,.24);
+    }
+    .secondary { border: 1.5px solid var(--line); background: #fff; color: var(--text); }
+    .primary:active, .secondary:active { transform: translateY(1px); }
 
     .practice-header {
-      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
-      margin-bottom: 10px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      gap: 8px; margin-bottom: 10px;
     }
-    .progress-text, .attempt-text { font-weight: 800; font-size: .9rem; }
+    .progress-text, .attempt-text { font-size: .9rem; font-weight: 850; }
     .attempt-text { text-align: right; color: var(--muted); }
-    .mini-timer { text-align: center; font-weight: 850; font-variant-numeric: tabular-nums; }
+    .timer { font-weight: 850; font-variant-numeric: tabular-nums; text-align: center; }
+    .progress-bar { height: 8px; border-radius: 999px; background: #e7edf5; overflow: hidden; margin-bottom: 14px; }
+    .progress-fill { width: 0; height: 100%; background: var(--primary); transition: width .25s ease; }
 
-    .progress-bar { height: 8px; background: #e9eef6; border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
-    .progress-fill { height: 100%; width: 0; background: var(--primary); transition: width .25s ease; }
+    .mode-label { text-align: center; color: var(--muted); font-weight: 800; margin-bottom: 6px; font-size: .85rem; }
+    .staff-card { padding: 12px 10px 18px; overflow: hidden; }
+    svg { width: 100%; height: auto; display: block; }
 
-    .staff-card { padding: 14px 10px 18px; overflow: hidden; }
-    .staff-wrap { width: 100%; overflow: hidden; }
-    svg { display: block; width: 100%; height: auto; }
-
-    .answers {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin-top: 14px;
-    }
-    .answer-btn {
+    .answers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin-top: 12px; }
+    .answer {
       min-height: 58px; border: 1.5px solid var(--line); border-radius: 15px;
       background: #fff; color: var(--text); font-weight: 850; font-size: 1rem;
     }
-    .answer-btn:nth-child(n+5) { grid-column: span 1; }
-    .answer-btn:active { transform: scale(.98); }
-    .answer-btn.good { border-color: var(--good); background: #e9f8ef; color: var(--good); }
-    .answer-btn.bad { border-color: var(--bad); background: #fff0f0; color: var(--bad); }
+    .answer.good { border-color: var(--good); background: var(--good-bg); color: var(--good); }
+    .answer.bad { border-color: var(--bad); background: #fff0f0; color: var(--bad); }
+
+    .reveal {
+      display: none; margin-top: 12px; padding: 14px; text-align: center;
+      border-radius: 14px; background: #fff4e5; border: 1px solid #ffd99a;
+    }
+    .reveal.show { display: block; }
+    .reveal strong { color: #8a5100; }
 
     .toast {
-      position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom));
-      transform: translateX(-50%) translateY(20px);
-      background: #111827; color: #fff; padding: 12px 16px; border-radius: 14px;
-      font-weight: 850; opacity: 0; pointer-events: none; transition: .2s ease;
-      z-index: 30; min-width: 180px; text-align: center; box-shadow: var(--shadow);
+      position: fixed; z-index: 30; left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(18px);
+      min-width: 190px; padding: 12px 16px; border-radius: 14px;
+      color: white; text-align: center; font-weight: 850; opacity: 0;
+      pointer-events: none; transition: .2s ease; box-shadow: var(--shadow);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast.good { background: var(--good); }
     .toast.bad { background: var(--bad); }
 
-    .reveal {
-      display: none; margin-top: 12px; padding: 14px; border-radius: 14px;
-      background: #fff4e5; border: 1px solid #ffd99a; text-align: center;
-    }
-    .reveal.show { display: block; }
-    .reveal strong { color: #8a5100; }
-
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px;
-    }
+    .summary-title { text-align: center; margin: 2px 0 4px; }
+    .summary-note { text-align: center; color: var(--muted); margin: 6px 0 18px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
     .stat {
-      border: 1px solid var(--line); border-radius: 14px; padding: 12px 8px; text-align: center;
+      border: 1px solid var(--line); border-radius: 14px; padding: 12px 7px;
+      text-align: center;
     }
     .stat b { display: block; font-size: 1.2rem; }
-    .stat span { color: var(--muted); font-size: .78rem; }
+    .stat span { color: var(--muted); font-size: .76rem; }
 
-    .heatmap {
-      display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px;
+    .progress-tabs {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 14px;
     }
-    .heat {
-      aspect-ratio: 1; border-radius: 10px; display: grid; place-items: center;
-      font-weight: 850; font-size: .78rem; border: 1px solid rgba(0,0,0,.04);
+    .progress-tab {
+      min-height: 48px; border: 1.5px solid var(--line); background: white;
+      border-radius: 14px; font-weight: 850;
     }
-    .heat.none { background: #eef2f7; color: #7a8495; }
-    .heat.weak { background: #ffdada; color: #a52020; }
-    .heat.mid { background: #fff0bd; color: #8c6200; }
-    .heat.strong { background: #d9f5e4; color: #177344; }
+    .progress-tab.active { border-color: var(--primary); background: #edf2ff; color: var(--primary-dark); }
 
-    .legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 12px; color: var(--muted); font-size: .78rem; }
-    .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 5px; vertical-align: -1px; }
+    .map-title-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px; margin-bottom: 4px;
+    }
+    .map-title-row h3 { margin: 0; font-size: 1rem; }
+    .map-title-row span { color: var(--muted); font-size: .8rem; font-weight: 750; }
+    .map-help { color: var(--muted); font-size: .78rem; margin: 0 0 8px; }
+    .map-wrap {
+      border: 1px solid var(--line); border-radius: 16px; padding: 8px 4px 6px;
+      margin-bottom: 13px; overflow: hidden; background: #fff;
+    }
 
-    .summary-note { color: var(--muted); text-align: center; margin: 8px 0 18px; }
-    .summary-title { text-align: center; margin: 4px 0 4px; }
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 8px 12px;
+      color: var(--muted); font-size: .75rem; margin-top: 8px;
+    }
+    .dot { width: 10px; height: 10px; display: inline-block; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
 
-    .footer-note { color: var(--muted); font-size: .78rem; text-align: center; margin-top: 10px; }
+    .clef-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .clef-box {
+      border: 1px solid var(--line); border-radius: 14px; padding: 12px;
+    }
+    .clef-box b { display: block; margin-bottom: 4px; }
+    .clef-box small { color: var(--muted); }
+    .bar { height: 7px; background: #e9eef5; border-radius: 999px; overflow: hidden; margin: 9px 0 6px; }
+    .bar > i { display: block; height: 100%; background: var(--primary); }
+
+    .weak-list { margin: 0; padding: 0; list-style: none; }
+    .weak-list li {
+      display: flex; justify-content: space-between; gap: 10px;
+      padding: 9px 0; border-bottom: 1px solid #eef1f5; font-size: .87rem;
+    }
+    .weak-list li:last-child { border-bottom: 0; }
+    .weak-list b { color: var(--bad); }
+
+    .footer-note { color: var(--muted); text-align: center; font-size: .78rem; margin-top: 10px; }
+
+    .detail-pop {
+      display: none; position: fixed; z-index: 50; inset: 0;
+      background: rgba(15,23,42,.36); padding: 20px;
+      align-items: flex-end; justify-content: center;
+    }
+    .detail-pop.show { display: flex; }
+    .detail-card {
+      width: min(100%, 560px); background: white; border-radius: 22px;
+      padding: 20px; box-shadow: var(--shadow);
+    }
+    .detail-card h3 { margin: 0 0 6px; }
+    .detail-card p { margin: 5px 0; color: var(--muted); }
 
     @media (min-width: 430px) {
-      .segmented.cols-4 { grid-template-columns: repeat(4, 1fr); }
       .answers { grid-template-columns: repeat(7, 1fr); }
-      .answer-btn { min-height: 56px; }
     }
   </style>
 </head>
@@ -166,70 +213,65 @@
         <h1>Note Sprint</h1>
         <p>Read notes faster</p>
       </div>
-      <button class="icon-btn" id="progressBtn" aria-label="Open progress">Progress</button>
+      <button id="progressBtn" class="icon-btn">Progress</button>
     </header>
 
     <section id="setupScreen" class="screen active">
       <div class="card">
-        <p class="section-title">Clef</p>
-        <div class="segmented cols-3" data-setting="clef">
-          <button class="choice active" data-value="treble"><span class="choice-symbol">𝄞</span><span>Treble</span></button>
-          <button class="choice" data-value="bass"><span class="choice-symbol">𝄢</span><span>Bass</span></button>
-          <button class="choice" data-value="both"><span class="choice-symbol dual">𝄞 𝄢</span><span>Both</span></button>
-        </div>
-      </div>
-
-      <div class="card">
-        <p class="section-title">Notes</p>
-        <div class="segmented cols-4" data-setting="accidental">
-          <button class="choice active" data-value="natural"><span class="choice-symbol accidental">♮</span><span>Natural</span></button>
-          <button class="choice" data-value="sharp"><span class="choice-symbol accidental">♯</span><span>Sharps</span></button>
-          <button class="choice" data-value="flat"><span class="choice-symbol accidental">♭</span><span>Flats</span></button>
-          <button class="choice" data-value="mixed"><span class="choice-symbol accidental">♮ ♯ ♭</span><span>Mixed</span></button>
+        <p class="section-title">Choose instrument</p>
+        <div class="instrument-grid">
+          <button class="instrument active" data-instrument="guitar">
+            <span class="instrument-icon">🎸</span>
+            <b>Guitar</b>
+            <small>Treble clef only</small>
+          </button>
+          <button class="instrument" data-instrument="piano">
+            <span class="instrument-icon">🎹</span>
+            <b>Piano</b>
+            <small>Treble and bass</small>
+          </button>
         </div>
       </div>
 
       <div class="card">
         <p class="section-title">Session length</p>
-        <div class="segmented cols-5" data-setting="length">
-          <button class="choice" data-value="10">10</button>
-          <button class="choice active" data-value="20">20</button>
-          <button class="choice" data-value="30">30</button>
-          <button class="choice" data-value="40">40</button>
-          <button class="choice" data-value="50">50</button>
+        <div class="segmented cols-5" id="lengthChoices">
+          <button class="choice" data-length="10">10</button>
+          <button class="choice active" data-length="20">20</button>
+          <button class="choice" data-length="30">30</button>
+          <button class="choice" data-length="40">40</button>
+          <button class="choice" data-length="50">50</button>
         </div>
       </div>
 
-      <button class="primary" id="startBtn">Start Practice</button>
-      <p class="footer-note">Progress is saved only on this device.</p>
+      <button id="startBtn" class="primary">Start Practice</button>
+      <p class="footer-note">Natural notes only. Progress is saved locally on this device.</p>
     </section>
 
     <section id="practiceScreen" class="screen">
       <div class="practice-header">
-        <div class="progress-text" id="questionText">1 / 20</div>
-        <div class="mini-timer" id="timerText">0.0s</div>
-        <div class="attempt-text" id="attemptText">3 tries</div>
+        <div id="questionText" class="progress-text">1 / 20</div>
+        <div id="timerText" class="timer">0.0s</div>
+        <div id="attemptText" class="attempt-text">3 tries</div>
       </div>
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+      <div id="modeLabel" class="mode-label"></div>
 
       <div class="card staff-card">
-        <div class="staff-wrap">
-          <svg id="staffSvg" viewBox="0 0 520 250" role="img" aria-label="Music note">
-            <rect width="520" height="250" fill="#ffffff"/>
-            <g id="staffLines"></g>
-            <text id="clefSymbol" x="46" y="158" font-size="86" font-family="serif">𝄞</text>
-            <g id="ledgerLines"></g>
-            <ellipse id="noteHead" cx="300" cy="125" rx="16" ry="11" transform="rotate(-18 300 125)" fill="#111827"/>
-            <line id="noteStem" x1="314" y1="125" x2="314" y2="68" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
-            <text id="accidentalText" x="264" y="136" font-size="38" text-anchor="middle" font-family="serif"></text>
-          </svg>
-        </div>
+        <svg id="quizStaff" viewBox="0 0 520 250" aria-label="Music note">
+          <rect width="520" height="250" fill="#fff"/>
+          <g id="quizLines"></g>
+          <text id="quizClef" x="46" y="158" font-size="88" font-family="serif">𝄞</text>
+          <g id="quizLedger"></g>
+          <ellipse id="quizHead" cx="300" cy="125" rx="16" ry="11" transform="rotate(-18 300 125)" fill="#111827"/>
+          <line id="quizStem" x1="314" y1="125" x2="314" y2="68" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+        </svg>
 
-        <div class="answers" id="answers"></div>
+        <div id="answers" class="answers"></div>
 
-        <div class="reveal" id="revealBox">
-          Correct answer: <strong id="correctAnswerText"></strong>
-          <button class="primary" id="nextBtn" style="margin-top:12px;">Next Question</button>
+        <div id="revealBox" class="reveal">
+          Correct answer: <strong id="correctText"></strong>
+          <button id="nextBtn" class="primary" style="margin-top:12px;">Next Question</button>
         </div>
       </div>
     </section>
@@ -237,17 +279,22 @@
     <section id="summaryScreen" class="screen">
       <div class="card">
         <h2 class="summary-title">Session Complete</h2>
-        <p class="summary-note">Keep practising weak positions to improve speed.</p>
+        <p class="summary-note">Weak positions will appear more often in future sessions.</p>
         <div class="stats-grid">
-          <div class="stat"><b id="sumAccuracy">0%</b><span>Accuracy</span></div>
-          <div class="stat"><b id="sumTime">0.0s</b><span>Avg. time</span></div>
+          <div class="stat"><b id="sumAccuracy">0%</b><span>First-try accuracy</span></div>
+          <div class="stat"><b id="sumTime">0.0s</b><span>Average time</span></div>
           <div class="stat"><b id="sumScore">0/0</b><span>First-try correct</span></div>
         </div>
       </div>
-      <button class="primary" id="againBtn">Practice Again</button>
+      <button id="againBtn" class="primary">Practice Again</button>
     </section>
 
     <section id="progressScreen" class="screen">
+      <div class="progress-tabs">
+        <button class="progress-tab active" data-progress-mode="guitar">🎸 Guitar</button>
+        <button class="progress-tab" data-progress-mode="piano">🎹 Piano</button>
+      </div>
+
       <div class="card">
         <p class="section-title">Overall progress</p>
         <div class="stats-grid">
@@ -258,32 +305,92 @@
       </div>
 
       <div class="card">
-        <p class="section-title">Note strength map</p>
-        <div class="heatmap" id="heatmap"></div>
+        <div id="guitarProgress">
+          <div class="map-title-row">
+            <h3>🎸 Treble Clef Note Map</h3>
+            <span>Exact positions</span>
+          </div>
+          <p class="map-help">Tap any coloured note for details.</p>
+          <div class="map-wrap">
+            <svg id="guitarMap" viewBox="0 0 620 250"></svg>
+          </div>
+        </div>
+
+        <div id="pianoProgress" style="display:none;">
+          <div class="map-title-row">
+            <h3>🎹 Treble Clef Note Map</h3>
+            <span>Exact positions</span>
+          </div>
+          <p class="map-help">Each staff position is tracked separately.</p>
+          <div class="map-wrap">
+            <svg id="pianoTrebleMap" viewBox="0 0 620 250"></svg>
+          </div>
+
+          <div class="map-title-row" style="margin-top:14px;">
+            <h3>🎹 Bass Clef Note Map</h3>
+            <span>Exact positions</span>
+          </div>
+          <div class="map-wrap">
+            <svg id="pianoBassMap" viewBox="0 0 620 250"></svg>
+          </div>
+
+          <div class="clef-summary">
+            <div class="clef-box">
+              <b>𝄞 Treble</b>
+              <span id="trebleAccuracy">0% accuracy</span>
+              <div class="bar"><i id="trebleBar" style="width:0%"></i></div>
+              <small id="trebleMeta">0 questions</small>
+            </div>
+            <div class="clef-box">
+              <b>𝄢 Bass</b>
+              <span id="bassAccuracy">0% accuracy</span>
+              <div class="bar"><i id="bassBar" style="width:0%"></i></div>
+              <small id="bassMeta">0 questions</small>
+            </div>
+          </div>
+        </div>
+
         <div class="legend">
-          <span><i class="dot" style="background:#eef2f7"></i>Not practised</span>
-          <span><i class="dot" style="background:#ffdada"></i>Weak</span>
-          <span><i class="dot" style="background:#fff0bd"></i>Improving</span>
-          <span><i class="dot" style="background:#d9f5e4"></i>Strong</span>
+          <span><i class="dot" style="background:var(--good-bg);border:1px solid var(--good)"></i>Strong</span>
+          <span><i class="dot" style="background:var(--mid-bg);border:1px solid #d39a00"></i>Improving</span>
+          <span><i class="dot" style="background:var(--bad-bg);border:1px solid var(--bad)"></i>Weak</span>
+          <span><i class="dot" style="background:var(--none-bg);border:1px solid #adb7c5"></i>Not practised</span>
         </div>
       </div>
 
-      <button class="secondary" id="backBtn">Back</button>
-      <button class="secondary" id="resetBtn" style="margin-top:10px;color:#b42318;">Reset Progress</button>
+      <div class="card">
+        <p class="section-title">Needs more practice</p>
+        <ul id="weakList" class="weak-list"></ul>
+      </div>
+
+      <button id="backBtn" class="secondary">Back</button>
+      <button id="resetBtn" class="secondary" style="margin-top:10px;color:#b42318;">Reset Progress</button>
     </section>
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+  <div id="detailPop" class="detail-pop">
+    <div class="detail-card">
+      <h3 id="detailTitle">Note details</h3>
+      <p id="detailPosition"></p>
+      <p id="detailAccuracy"></p>
+      <p id="detailTime"></p>
+      <p id="detailQuestions"></p>
+      <button id="closeDetail" class="secondary" style="margin-top:12px;">Close</button>
+    </div>
+  </div>
+
   <script>
     const SOLFEGE = ["Do","Re","Mi","Fa","Sol","La","Si"];
     const NOTE_NAMES = ["C","D","E","F","G","A","B"];
+    const STEP_MIN = -2;
+    const STEP_MAX = 12;
 
-    const settings = { clef: "treble", accidental: "natural", length: 20 };
-    let state = {
-      index: 0, questions: [], attempts: 0, firstTryCorrect: 0,
-      totalResponses: 0, sessionTimes: [], questionStarted: 0, locked: false
-    };
+    const settings = { instrument: "guitar", length: 20 };
+    let progressMode = "guitar";
+    let state = {};
+    let timerHandle;
 
     const screens = {
       setup: document.getElementById("setupScreen"),
@@ -292,147 +399,154 @@
       progress: document.getElementById("progressScreen")
     };
 
-    const statsKey = "noteSprintStatsV1";
-    const defaultStats = { totalQuestions: 0, totalCorrectResponses: 0, totalResponses: 0, totalTimeMs: 0, notes: {} };
+    const statsKey = "noteSprintStatsV2";
+    const blankStats = () => ({
+      guitar: { totalQuestions:0, totalResponses:0, correctResponses:0, totalTimeMs:0, notes:{} },
+      piano:  { totalQuestions:0, totalResponses:0, correctResponses:0, totalTimeMs:0, notes:{} }
+    });
 
     function loadStats() {
-      try { return { ...defaultStats, ...(JSON.parse(localStorage.getItem(statsKey)) || {}) }; }
-      catch { return { ...defaultStats }; }
+      try {
+        const saved = JSON.parse(localStorage.getItem(statsKey));
+        return saved && saved.guitar && saved.piano ? saved : blankStats();
+      } catch { return blankStats(); }
     }
-    function saveStats(stats) { localStorage.setItem(statsKey, JSON.stringify(stats)); }
+    function saveStats(s) { localStorage.setItem(statsKey, JSON.stringify(s)); }
 
     function showScreen(name) {
       Object.values(screens).forEach(s => s.classList.remove("active"));
       screens[name].classList.add("active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({top:0, behavior:"smooth"});
     }
 
-    document.querySelectorAll(".segmented").forEach(group => {
-      group.addEventListener("click", e => {
-        const btn = e.target.closest(".choice");
-        if (!btn) return;
-        group.querySelectorAll(".choice").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".instrument").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".instrument").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        const key = group.dataset.setting;
-        settings[key] = key === "length" ? Number(btn.dataset.value) : btn.dataset.value;
+        settings.instrument = btn.dataset.instrument;
       });
     });
 
-    function buildPool() {
-      const clefs = settings.clef === "both" ? ["treble","bass"] : [settings.clef];
+    document.querySelectorAll("#lengthChoices .choice").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#lengthChoices .choice").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        settings.length = Number(btn.dataset.length);
+      });
+    });
+
+    function pitchFor(clef, step) {
+      // step 0 is the bottom line.
+      // Treble bottom line E; Bass bottom line G.
+      const baseIndex = clef === "treble" ? 2 : 4;
+      const idx = ((baseIndex + step) % 7 + 7) % 7;
+      return { name: NOTE_NAMES[idx], solfege: SOLFEGE[idx] };
+    }
+
+    function noteId(instrument, clef, step) {
+      return `${instrument}:${clef}:${step}`;
+    }
+
+    function buildPool(instrument) {
+      const clefs = instrument === "guitar" ? ["treble"] : ["treble","bass"];
       const pool = [];
-
       clefs.forEach(clef => {
-        // 15 practical staff positions, including ledger lines.
-        for (let step = -2; step <= 12; step++) {
-          const pitchIndex = clef === "treble" ? step + 2 : step + 4;
-          const normalized = ((pitchIndex % 7) + 7) % 7;
-          const noteName = NOTE_NAMES[normalized];
-          const solfege = SOLFEGE[normalized];
-
-          let accOptions = [""];
-          if (settings.accidental === "sharp") accOptions = ["♯"];
-          if (settings.accidental === "flat") accOptions = ["♭"];
-          if (settings.accidental === "mixed") accOptions = ["","♯","♭"];
-
-          accOptions.forEach(acc => pool.push({
-            id: `${clef}:${step}:${acc || "natural"}`,
-            clef, step, noteName, solfege, accidental: acc
-          }));
+        for (let step = STEP_MIN; step <= STEP_MAX; step++) {
+          const pitch = pitchFor(clef, step);
+          pool.push({
+            instrument, clef, step,
+            name: pitch.name, solfege: pitch.solfege,
+            id: noteId(instrument, clef, step)
+          });
         }
       });
       return pool;
     }
 
-    function masteryWeight(note, stats) {
-      const n = stats.notes[note.id];
-      if (!n || !n.seen) return 5;
-      const accuracy = n.correct / Math.max(1, n.responses);
-      const avg = n.timeMs / Math.max(1, n.seen);
-      let weight = 1;
-      weight += (1 - accuracy) * 6;
-      if (avg > 2500) weight += 2;
-      if (n.failures > 0) weight += Math.min(3, n.failures * 0.5);
-      return Math.max(0.8, weight);
+    function noteWeight(note, data) {
+      const n = data.notes[note.id];
+      if (!n || n.questions === 0) return 5.5;
+      const accuracy = n.correctResponses / Math.max(1, n.responses);
+      const avg = n.totalTimeMs / Math.max(1, n.questions);
+      let w = 1;
+      w += (1 - accuracy) * 7;
+      if (avg > 3500) w += 2.5;
+      else if (avg > 2500) w += 1.3;
+      w += Math.min(2.5, (n.failedQuestions || 0) * .3);
+      return Math.max(.8, w);
     }
 
-    function weightedPick(pool, stats, previousId) {
-      const candidates = pool.filter(n => n.id !== previousId || pool.length === 1);
-      const weights = candidates.map(n => masteryWeight(n, stats));
-      const total = weights.reduce((a,b) => a+b, 0);
-      let r = Math.random() * total;
-      for (let i = 0; i < candidates.length; i++) {
+    function weightedPick(pool, data, previousId) {
+      const choices = pool.filter(n => n.id !== previousId || pool.length === 1);
+      const weights = choices.map(n => noteWeight(n, data));
+      let r = Math.random() * weights.reduce((a,b) => a+b, 0);
+      for (let i=0; i<choices.length; i++) {
         r -= weights[i];
-        if (r <= 0) return candidates[i];
+        if (r <= 0) return choices[i];
       }
-      return candidates[candidates.length - 1];
+      return choices[choices.length-1];
     }
 
     function startSession() {
-      const pool = buildPool();
-      const stats = loadStats();
-      state = {
-        index: 0, questions: [], attempts: 0, firstTryCorrect: 0,
-        totalResponses: 0, sessionTimes: [], questionStarted: performance.now(), locked: false
-      };
-      let prev = null;
-      for (let i = 0; i < settings.length; i++) {
-        const q = weightedPick(pool, stats, prev);
-        state.questions.push(q);
-        prev = q.id;
+      const allStats = loadStats();
+      const data = allStats[settings.instrument];
+      const pool = buildPool(settings.instrument);
+      const questions = [];
+      let previousId = null;
+
+      for (let i=0; i<settings.length; i++) {
+        const q = weightedPick(pool, data, previousId);
+        questions.push(q);
+        previousId = q.id;
       }
+
+      state = {
+        index:0, questions, attempts:0, firstTryCorrect:0,
+        sessionTimes:[], questionStarted:performance.now(), locked:false,
+        instrument:settings.instrument
+      };
+
       showScreen("practice");
       renderQuestion();
     }
 
-    function renderStaff(note) {
-      const staffLines = document.getElementById("staffLines");
-      const ledgerLines = document.getElementById("ledgerLines");
-      const clefSymbol = document.getElementById("clefSymbol");
-      const noteHead = document.getElementById("noteHead");
-      const noteStem = document.getElementById("noteStem");
-      const accidentalText = document.getElementById("accidentalText");
+    function drawQuizStaff(note) {
+      const lines = document.getElementById("quizLines");
+      const ledger = document.getElementById("quizLedger");
+      const clef = document.getElementById("quizClef");
+      const head = document.getElementById("quizHead");
+      const stem = document.getElementById("quizStem");
 
-      staffLines.innerHTML = "";
-      ledgerLines.innerHTML = "";
+      lines.innerHTML = "";
+      ledger.innerHTML = "";
 
       const top = 75, spacing = 22;
-      for (let i = 0; i < 5; i++) {
-        const y = top + i * spacing;
-        staffLines.innerHTML += `<line x1="105" y1="${y}" x2="455" y2="${y}" stroke="#1f2937" stroke-width="2.2"/>`;
+      for (let i=0; i<5; i++) {
+        const y = top + i*spacing;
+        lines.innerHTML += `<line x1="105" y1="${y}" x2="455" y2="${y}" stroke="#1f2937" stroke-width="2.2"/>`;
       }
 
-      clefSymbol.textContent = note.clef === "treble" ? "𝄞" : "𝄢";
-      clefSymbol.setAttribute("y", note.clef === "treble" ? "159" : "151");
-      clefSymbol.setAttribute("font-size", note.clef === "treble" ? "88" : "76");
+      clef.textContent = note.clef === "treble" ? "𝄞" : "𝄢";
+      clef.setAttribute("font-size", note.clef === "treble" ? "88" : "76");
+      clef.setAttribute("y", note.clef === "treble" ? "159" : "151");
 
-      // step 0 = bottom staff line. Each step is line/space.
-      const y = top + 4 * spacing - note.step * (spacing / 2);
-      noteHead.setAttribute("cy", y);
-      noteHead.setAttribute("transform", `rotate(-18 300 ${y})`);
+      const y = top + 4*spacing - note.step*(spacing/2);
+      head.setAttribute("cy", y);
+      head.setAttribute("transform", `rotate(-18 300 ${y})`);
 
-      const stemUp = y >= 119;
-      if (stemUp) {
-        noteStem.setAttribute("x1", "314"); noteStem.setAttribute("x2", "314");
-        noteStem.setAttribute("y1", y); noteStem.setAttribute("y2", y - 58);
+      if (y >= 119) {
+        stem.setAttribute("x1","314"); stem.setAttribute("x2","314");
+        stem.setAttribute("y1",y); stem.setAttribute("y2",y-58);
       } else {
-        noteStem.setAttribute("x1", "286"); noteStem.setAttribute("x2", "286");
-        noteStem.setAttribute("y1", y); noteStem.setAttribute("y2", y + 58);
+        stem.setAttribute("x1","286"); stem.setAttribute("x2","286");
+        stem.setAttribute("y1",y); stem.setAttribute("y2",y+58);
       }
 
-      accidentalText.textContent = note.accidental;
-      accidentalText.setAttribute("y", y + 11);
-
-      // Ledger lines for every even step outside the staff.
       const ledgerYs = [];
-      if (note.step < 0) {
-        for (let s = -2; s >= note.step; s -= 2) ledgerYs.push(top + 4*spacing - s*(spacing/2));
-      }
-      if (note.step > 8) {
-        for (let s = 10; s <= note.step; s += 2) ledgerYs.push(top + 4*spacing - s*(spacing/2));
-      }
+      if (note.step < 0) for (let s=-2; s>=note.step; s-=2) ledgerYs.push(top+4*spacing-s*(spacing/2));
+      if (note.step > 8) for (let s=10; s<=note.step; s+=2) ledgerYs.push(top+4*spacing-s*(spacing/2));
       ledgerYs.forEach(ly => {
-        ledgerLines.innerHTML += `<line x1="275" y1="${ly}" x2="326" y2="${ly}" stroke="#1f2937" stroke-width="2.2"/>`;
+        ledger.innerHTML += `<line x1="275" y1="${ly}" x2="326" y2="${ly}" stroke="#1f2937" stroke-width="2.2"/>`;
       });
     }
 
@@ -441,9 +555,9 @@
       wrap.innerHTML = "";
       SOLFEGE.forEach(name => {
         const b = document.createElement("button");
-        b.className = "answer-btn";
+        b.className = "answer";
         b.textContent = name;
-        b.addEventListener("click", () => answer(name, b));
+        b.addEventListener("click", () => submitAnswer(name, b));
         wrap.appendChild(b);
       });
     }
@@ -452,90 +566,108 @@
       state.attempts = 0;
       state.locked = false;
       state.questionStarted = performance.now();
+
       const note = state.questions[state.index];
-      renderStaff(note);
+      drawQuizStaff(note);
       renderAnswers();
+
       document.getElementById("revealBox").classList.remove("show");
-      document.getElementById("questionText").textContent = `${state.index + 1} / ${state.questions.length}`;
+      document.getElementById("questionText").textContent = `${state.index+1} / ${state.questions.length}`;
       document.getElementById("attemptText").textContent = "3 tries";
-      document.getElementById("progressFill").style.width = `${(state.index / state.questions.length) * 100}%`;
+      document.getElementById("progressFill").style.width = `${state.index/state.questions.length*100}%`;
+      document.getElementById("modeLabel").textContent =
+        `${state.instrument === "guitar" ? "🎸 Guitar" : "🎹 Piano"} • ${note.clef === "treble" ? "Treble clef" : "Bass clef"}`;
       updateTimer();
     }
 
-    let timerHandle;
     function updateTimer() {
       cancelAnimationFrame(timerHandle);
       const tick = () => {
         if (screens.practice.classList.contains("active") && !state.locked) {
-          const elapsed = (performance.now() - state.questionStarted) / 1000;
-          document.getElementById("timerText").textContent = `${elapsed.toFixed(1)}s`;
+          const sec = (performance.now()-state.questionStarted)/1000;
+          document.getElementById("timerText").textContent = `${sec.toFixed(1)}s`;
           timerHandle = requestAnimationFrame(tick);
         }
       };
       tick();
     }
 
-    function showToast(message, type) {
+    function toast(message, type) {
       const t = document.getElementById("toast");
       t.textContent = message;
       t.className = `toast show ${type}`;
       setTimeout(() => t.className = "toast", 850);
     }
 
-    function recordAnswer(note, correct, elapsed, questionFinished) {
-      const stats = loadStats();
-      const n = stats.notes[note.id] || { seen: 0, correct: 0, responses: 0, failures: 0, timeMs: 0, label: `${note.clef} ${note.solfege}` };
-      n.responses++;
-      stats.totalResponses++;
-      if (correct) { n.correct++; stats.totalCorrectResponses++; }
-      else { n.failures++; }
-      if (questionFinished) {
-        n.seen++;
-        n.timeMs += elapsed;
-        stats.totalQuestions++;
-        stats.totalTimeMs += elapsed;
+    function ensureNoteRecord(data, note) {
+      if (!data.notes[note.id]) {
+        data.notes[note.id] = {
+          instrument:note.instrument, clef:note.clef, step:note.step,
+          solfege:note.solfege, questions:0, responses:0,
+          correctResponses:0, firstTryCorrect:0, failedQuestions:0, totalTimeMs:0
+        };
       }
-      stats.notes[note.id] = n;
-      saveStats(stats);
+      return data.notes[note.id];
     }
 
-    function answer(value, button) {
+    function recordResponse(note, correct) {
+      const all = loadStats();
+      const data = all[note.instrument];
+      const n = ensureNoteRecord(data, note);
+      n.responses++;
+      data.totalResponses++;
+      if (correct) {
+        n.correctResponses++;
+        data.correctResponses++;
+      }
+      saveStats(all);
+    }
+
+    function finishQuestionRecord(note, elapsed, passed, firstTry) {
+      const all = loadStats();
+      const data = all[note.instrument];
+      const n = ensureNoteRecord(data, note);
+      n.questions++;
+      n.totalTimeMs += elapsed;
+      if (firstTry) n.firstTryCorrect++;
+      if (!passed) n.failedQuestions++;
+      data.totalQuestions++;
+      data.totalTimeMs += elapsed;
+      saveStats(all);
+    }
+
+    function submitAnswer(value, button) {
       if (state.locked) return;
       const note = state.questions[state.index];
       state.attempts++;
-      state.totalResponses++;
-      const elapsed = performance.now() - state.questionStarted;
-      const isCorrect = value === note.solfege;
+      const elapsed = performance.now()-state.questionStarted;
+      const correct = value === note.solfege;
+      recordResponse(note, correct);
 
-      if (isCorrect) {
+      if (correct) {
         state.locked = true;
         button.classList.add("good");
-        if (state.attempts === 1) state.firstTryCorrect++;
+        const firstTry = state.attempts === 1;
+        if (firstTry) state.firstTryCorrect++;
         state.sessionTimes.push(elapsed);
-        recordAnswer(note, true, elapsed, true);
-        showToast("Correct!", "good");
+        finishQuestionRecord(note, elapsed, true, firstTry);
+        toast("Correct!", "good");
         setTimeout(nextQuestion, 550);
       } else {
         button.classList.add("bad");
         button.disabled = true;
-        recordAnswer(note, false, elapsed, false);
-        const left = 3 - state.attempts;
-        document.getElementById("attemptText").textContent = `${left} ${left === 1 ? "try" : "tries"}`;
+        const left = 3-state.attempts;
+        document.getElementById("attemptText").textContent = `${left} ${left===1 ? "try" : "tries"}`;
+
         if (state.attempts >= 3) {
           state.locked = true;
           state.sessionTimes.push(elapsed);
-          // Finish question without adding another response.
-          const stats = loadStats();
-          const n = stats.notes[note.id] || { seen:0, correct:0, responses:0, failures:0, timeMs:0, label:`${note.clef} ${note.solfege}` };
-          n.seen++; n.timeMs += elapsed;
-          stats.totalQuestions++; stats.totalTimeMs += elapsed;
-          stats.notes[note.id] = n; saveStats(stats);
-
-          document.getElementById("correctAnswerText").textContent = `${note.solfege}${note.accidental ? " " + note.accidental : ""}`;
+          finishQuestionRecord(note, elapsed, false, false);
+          document.getElementById("correctText").textContent = note.solfege;
           document.getElementById("revealBox").classList.add("show");
-          showToast("Incorrect — see the answer", "bad");
+          toast("Incorrect — see the answer", "bad");
         } else {
-          showToast("Wrong — try again", "bad");
+          toast("Wrong — try again", "bad");
         }
       }
     }
@@ -547,61 +679,195 @@
     }
 
     function finishSession() {
-      state.locked = true;
-      document.getElementById("progressFill").style.width = "100%";
-      const avg = state.sessionTimes.reduce((a,b) => a+b, 0) / Math.max(1, state.sessionTimes.length);
-      document.getElementById("sumAccuracy").textContent = `${Math.round((state.firstTryCorrect / state.questions.length) * 100)}%`;
-      document.getElementById("sumTime").textContent = `${(avg / 1000).toFixed(1)}s`;
+      const avg = state.sessionTimes.reduce((a,b)=>a+b,0)/Math.max(1,state.sessionTimes.length);
+      document.getElementById("sumAccuracy").textContent =
+        `${Math.round(state.firstTryCorrect/state.questions.length*100)}%`;
+      document.getElementById("sumTime").textContent = `${(avg/1000).toFixed(1)}s`;
       document.getElementById("sumScore").textContent = `${state.firstTryCorrect}/${state.questions.length}`;
       showScreen("summary");
     }
 
-    function renderProgress() {
-      const stats = loadStats();
-      const accuracy = stats.totalResponses ? Math.round(stats.totalCorrectResponses / stats.totalResponses * 100) : 0;
-      const avg = stats.totalQuestions ? stats.totalTimeMs / stats.totalQuestions / 1000 : 0;
-      document.getElementById("overallAccuracy").textContent = `${accuracy}%`;
-      document.getElementById("overallTime").textContent = `${avg.toFixed(1)}s`;
-      document.getElementById("overallQuestions").textContent = stats.totalQuestions;
+    function masteryClass(n) {
+      if (!n || n.questions === 0) return "none";
+      const accuracy = n.correctResponses/Math.max(1,n.responses);
+      const avg = n.totalTimeMs/Math.max(1,n.questions);
+      if (accuracy < .55) return "weak";
+      if (accuracy < .82 || avg > 2800) return "mid";
+      return "strong";
+    }
 
-      const heatmap = document.getElementById("heatmap");
-      heatmap.innerHTML = "";
-      const entries = Object.entries(stats.notes).sort((a,b) => a[0].localeCompare(b[0])).slice(0, 70);
+    function masteryColor(cls) {
+      if (cls === "strong") return {fill:"#dcf5e7", stroke:"#168a4a"};
+      if (cls === "mid") return {fill:"#fff0bd", stroke:"#d39a00"};
+      if (cls === "weak") return {fill:"#ffdada", stroke:"#c82f2f"};
+      return {fill:"#edf1f6", stroke:"#adb7c5"};
+    }
 
-      if (!entries.length) {
-        SOLFEGE.forEach(name => {
-          const el = document.createElement("div");
-          el.className = "heat none";
-          el.textContent = name.slice(0,2);
-          heatmap.appendChild(el);
-        });
-        return;
+    function positionLabel(step) {
+      if (step < 0) return "below staff";
+      if (step > 8) return "above staff";
+      const number = Math.floor(step/2)+1;
+      return step % 2 === 0 ? `line ${number}` : `space ${number}`;
+    }
+
+    function drawProgressMap(svgId, instrument, clef, data) {
+      const svg = document.getElementById(svgId);
+      const width = 620, top = 62, spacing = 18;
+      let content = `<rect width="${width}" height="250" fill="#fff"/>`;
+
+      for (let i=0;i<5;i++) {
+        const y=top+i*spacing;
+        content += `<line x1="60" y1="${y}" x2="594" y2="${y}" stroke="#263142" stroke-width="1.5"/>`;
+      }
+      content += `<text x="12" y="${clef==="treble" ? 126 : 117}" font-size="${clef==="treble" ? 66 : 57}" font-family="serif">${clef==="treble" ? "𝄞" : "𝄢"}</text>`;
+
+      const count = STEP_MAX-STEP_MIN+1;
+      const startX = 88, endX = 575;
+      for (let step=STEP_MIN; step<=STEP_MAX; step++) {
+        const idx=step-STEP_MIN;
+        const x=startX+(endX-startX)*(idx/(count-1));
+        const y=top+4*spacing-step*(spacing/2);
+        const pitch=pitchFor(clef,step);
+        const id=noteId(instrument,clef,step);
+        const n=data.notes[id];
+        const cls=masteryClass(n);
+        const c=masteryColor(cls);
+
+        if (step<0 && step%2===0) {
+          content += `<line x1="${x-14}" y1="${y}" x2="${x+14}" y2="${y}" stroke="#263142" stroke-width="1.5"/>`;
+        }
+        if (step>8 && step%2===0) {
+          content += `<line x1="${x-14}" y1="${y}" x2="${x+14}" y2="${y}" stroke="#263142" stroke-width="1.5"/>`;
+        }
+
+        content += `
+          <g class="map-note" data-id="${id}" style="cursor:pointer">
+            <circle cx="${x}" cy="${y}" r="9" fill="${c.fill}" stroke="${c.stroke}" stroke-width="2"/>
+            <text x="${x}" y="187" text-anchor="middle" font-size="12" font-weight="750" fill="#334155">${pitch.solfege}</text>
+          </g>`;
       }
 
-      entries.forEach(([id, n]) => {
-        const accuracyN = n.responses ? n.correct / n.responses : 0;
-        const avgN = n.seen ? n.timeMs / n.seen : 99999;
-        let cls = "none";
-        if (n.seen > 0) cls = accuracyN < .55 ? "weak" : (accuracyN < .82 || avgN > 2800 ? "mid" : "strong");
-        const el = document.createElement("div");
-        el.className = `heat ${cls}`;
-        const parts = id.split(":");
-        el.textContent = n.label ? n.label.split(" ").pop().slice(0,2) : "?";
-        el.title = `${parts[0]} • ${n.label || id}`;
-        heatmap.appendChild(el);
+      content += `<text x="88" y="220" font-size="11" fill="#7a8495">Ledger</text>
+                  <text x="280" y="220" font-size="11" fill="#7a8495">Staff positions</text>
+                  <text x="540" y="220" font-size="11" fill="#7a8495">Ledger</text>`;
+      svg.innerHTML=content;
+
+      svg.querySelectorAll(".map-note").forEach(g => {
+        g.addEventListener("click", () => showDetail(data.notes[g.dataset.id], g.dataset.id));
       });
     }
 
+    function clefStats(data, clef) {
+      const entries=Object.values(data.notes).filter(n=>n.clef===clef);
+      const questions=entries.reduce((s,n)=>s+n.questions,0);
+      const responses=entries.reduce((s,n)=>s+n.responses,0);
+      const correct=entries.reduce((s,n)=>s+n.correctResponses,0);
+      const time=entries.reduce((s,n)=>s+n.totalTimeMs,0);
+      return {
+        questions, accuracy:responses ? Math.round(correct/responses*100) : 0,
+        avg:questions ? time/questions/1000 : 0
+      };
+    }
+
+    function renderWeakList(data) {
+      const list=document.getElementById("weakList");
+      const entries=Object.values(data.notes)
+        .filter(n=>n.questions>0)
+        .map(n=>({
+          ...n,
+          accuracy:n.correctResponses/Math.max(1,n.responses),
+          avg:n.totalTimeMs/Math.max(1,n.questions)
+        }))
+        .sort((a,b)=>(a.accuracy-b.accuracy)||(b.avg-a.avg))
+        .slice(0,5);
+
+      list.innerHTML="";
+      if (!entries.length) {
+        list.innerHTML=`<li><span>No practice data yet</span><span>—</span></li>`;
+        return;
+      }
+      entries.forEach(n=>{
+        const li=document.createElement("li");
+        li.innerHTML=`<span>${n.clef==="treble" ? "Treble" : "Bass"} ${n.solfege} · ${positionLabel(n.step)}</span><b>${Math.round(n.accuracy*100)}%</b>`;
+        list.appendChild(li);
+      });
+    }
+
+    function showDetail(n, id) {
+      const parts=id.split(":");
+      const instrument=parts[0], clef=parts[1], step=Number(parts[2]);
+      const pitch=pitchFor(clef,step);
+      const questions=n?.questions || 0;
+      const accuracy=n?.responses ? Math.round(n.correctResponses/n.responses*100) : 0;
+      const avg=questions ? n.totalTimeMs/questions/1000 : 0;
+
+      document.getElementById("detailTitle").textContent=`${pitch.solfege} · ${clef==="treble" ? "Treble" : "Bass"} clef`;
+      document.getElementById("detailPosition").textContent=`Position: ${positionLabel(step)}`;
+      document.getElementById("detailAccuracy").textContent=`Accuracy: ${questions ? accuracy+"%" : "Not practised"}`;
+      document.getElementById("detailTime").textContent=`Average response time: ${questions ? avg.toFixed(1)+"s" : "—"}`;
+      document.getElementById("detailQuestions").textContent=`Questions completed: ${questions}`;
+      document.getElementById("detailPop").classList.add("show");
+    }
+
+    function renderProgress() {
+      const all=loadStats();
+      const data=all[progressMode];
+      const accuracy=data.totalResponses ? Math.round(data.correctResponses/data.totalResponses*100) : 0;
+      const avg=data.totalQuestions ? data.totalTimeMs/data.totalQuestions/1000 : 0;
+
+      document.getElementById("overallAccuracy").textContent=`${accuracy}%`;
+      document.getElementById("overallTime").textContent=`${avg.toFixed(1)}s`;
+      document.getElementById("overallQuestions").textContent=data.totalQuestions;
+
+      if (progressMode==="guitar") {
+        document.getElementById("guitarProgress").style.display="";
+        document.getElementById("pianoProgress").style.display="none";
+        drawProgressMap("guitarMap","guitar","treble",data);
+      } else {
+        document.getElementById("guitarProgress").style.display="none";
+        document.getElementById("pianoProgress").style.display="";
+        drawProgressMap("pianoTrebleMap","piano","treble",data);
+        drawProgressMap("pianoBassMap","piano","bass",data);
+
+        const tr=clefStats(data,"treble"), bs=clefStats(data,"bass");
+        document.getElementById("trebleAccuracy").textContent=`${tr.accuracy}% accuracy`;
+        document.getElementById("bassAccuracy").textContent=`${bs.accuracy}% accuracy`;
+        document.getElementById("trebleBar").style.width=`${tr.accuracy}%`;
+        document.getElementById("bassBar").style.width=`${bs.accuracy}%`;
+        document.getElementById("trebleMeta").textContent=`${tr.questions} questions · ${tr.avg.toFixed(1)}s avg`;
+        document.getElementById("bassMeta").textContent=`${bs.questions} questions · ${bs.avg.toFixed(1)}s avg`;
+      }
+      renderWeakList(data);
+    }
+
+    document.querySelectorAll(".progress-tab").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        document.querySelectorAll(".progress-tab").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        progressMode=btn.dataset.progressMode;
+        renderProgress();
+      });
+    });
+
     document.getElementById("startBtn").addEventListener("click", startSession);
     document.getElementById("nextBtn").addEventListener("click", nextQuestion);
-    document.getElementById("againBtn").addEventListener("click", () => showScreen("setup"));
-    document.getElementById("progressBtn").addEventListener("click", () => { renderProgress(); showScreen("progress"); });
-    document.getElementById("backBtn").addEventListener("click", () => showScreen("setup"));
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      if (confirm("Reset all saved progress on this device?")) {
+    document.getElementById("againBtn").addEventListener("click",()=>showScreen("setup"));
+    document.getElementById("progressBtn").addEventListener("click",()=>{
+      progressMode=settings.instrument;
+      document.querySelectorAll(".progress-tab").forEach(b=>b.classList.toggle("active",b.dataset.progressMode===progressMode));
+      renderProgress();
+      showScreen("progress");
+    });
+    document.getElementById("backBtn").addEventListener("click",()=>showScreen("setup"));
+    document.getElementById("resetBtn").addEventListener("click",()=>{
+      if (confirm("Reset all Guitar and Piano progress on this device?")) {
         localStorage.removeItem(statsKey);
         renderProgress();
       }
+    });
+    document.getElementById("closeDetail").addEventListener("click",()=>document.getElementById("detailPop").classList.remove("show"));
+    document.getElementById("detailPop").addEventListener("click",e=>{
+      if (e.target.id==="detailPop") e.currentTarget.classList.remove("show");
     });
 
     renderAnswers();
